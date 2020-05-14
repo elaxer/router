@@ -13,7 +13,7 @@ composer require elaxer/router
 require 'vendor/autoload.php';
 
 // Router creation instance
-$router = new \Router\Router();
+$router = new \Elaxer\Router\Router();
 
 // Adding Routes
 $router->addRoute('GET', '/', 'indexHandler');
@@ -30,7 +30,7 @@ $router->addRoute('GET', '/users/{id:\d+}', 'getUserItemHandler');
 try {
     // Variable $request is a class object that implements the RequestInterface from the psr/http-message package
     $vars = $router->findRoute($request)['vars'];
-} catch (\Router\RouteNotFoundException $e) {
+} catch (\Elaxer\Router\RouteNotFoundException $e) {
     // If no route matches the request
     http_response_code(404);
     exit($e->getMessage());
