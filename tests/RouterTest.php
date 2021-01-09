@@ -43,24 +43,37 @@ class RouterTest extends TestCase
      */
     public function findRouteProvider(): iterable
     {
-        $expectedRoute = new Route('GET', '/', 'index');
+        $expectedRoute = new Route(['GET'], '/', 'index');
         yield ['/', 'GET', $expectedRoute, [$expectedRoute]];
 
-        $expectedRoute = new Route('DELETE', '/users/{id:\d{2}}', 'deleteUser');
+        $expectedRoute = new Route(['DELETE'], '/users/{id:\d{2}}', 'deleteUser');
         yield ['/users/12', 'DELETE', $expectedRoute, [
-            new Route('GET', '/', 'index'),
-            new Route('POST', '/users', 'addUser'),
+            new Route(['GET'], '/', 'index'),
+            new Route(['POST'], '/users', 'addUser'),
             $expectedRoute,
         ]];
 
-        $expectedRoute = new Route('GET', '/posts/{id}', 'postHandler');
-        yield ['/posts/good-post31_', 'GET', $expectedRoute, [$expectedRoute, new Route('GET', '/posts', 'postsHandler')]];
+        $expectedRoute = new Route(null, '/users/{id:\d{2}}', 'deleteUser');
+        yield ['/users/12', 'DELETE', $expectedRoute, [
+            $expectedRoute,
+            new Route(null, '/users/{id:\d{2}}', 'deleteUser'),
+            new Route(['POST'], '/users', 'addUser'),
+        ]];
 
-        $expectedRoute = new Route('DELETE', '/posts/{id:\d+}', 'deletePost');
+        $expectedRoute = new Route(null, '/users/{id:\d+}', 'deleteUser');
+        yield ['/users/1', 'DELETE', $expectedRoute, [$expectedRoute]];
+
+        $expectedRoute = new Route(['GET', 'POST', 'PUT'], '/users/{id:\d+}', 'deleteUser');
+        yield ['/users/1', 'GET', $expectedRoute, [$expectedRoute]];
+
+        $expectedRoute = new Route(['GET'], '/posts/{id}', 'postHandler');
+        yield ['/posts/good-post31_', 'GET', $expectedRoute, [$expectedRoute, new Route(['GET'], '/posts', 'postsHandler')]];
+
+        $expectedRoute = new Route(['DELETE'], '/posts/{id:\d+}', 'deletePost');
         yield ['/posts/51', 'DELETE', $expectedRoute, [
-            new Route('GET', '/', fn() => 'Hello world'),
-            new Route('GET', '/posts/{id:\d+}', fn(int $id) => "Post with id $id"),
-            new Route('POST', '/posts', 'createPost'),
+            new Route(['GET'], '/', fn() => 'Hello world'),
+            new Route(['GET'], '/posts/{id:\d+}', fn(int $id) => "Post with id $id"),
+            new Route(['POST'], '/posts', 'createPost'),
             $expectedRoute,
         ]];
     }
@@ -71,14 +84,14 @@ class RouterTest extends TestCase
     public function findRouteNotFoundProvider(): iterable
     {
         yield ['/', 'GET', null, [
-            new Route('GET', '/users', 'usersList'),
-            new Route('GET', '/users/{id:\d+}', 'getUser'),
-            new Route('POST', '/users', 'createUser'),
+            new Route(['GET'], '/users', 'usersList'),
+            new Route(['GET'], '/users/{id:\d+}', 'getUser'),
+            new Route(['POST'], '/users', 'createUser'),
         ]];
         yield ['/users/john', 'GET', null, [
-            new Route('GET', '/users', 'usersList'),
-            new Route('GET', '/users/{id:\d+}', 'getUser'),
-            new Route('POST', '/users', 'createUser'),
+            new Route(['GET'], '/users', 'usersList'),
+            new Route(['GET'], '/users/{id:\d+}', 'getUser'),
+            new Route(['POST'], '/users', 'createUser'),
         ]];
     }
 
@@ -93,17 +106,17 @@ class RouterTest extends TestCase
         $urlPath = '/news/breaking-news-22_02';
         $method = 'PUT';
 
-        $router->addRoute(new Route('GET', '/', fn() => 'Hello world'));
+        $router->addRoute(new Route(['GET'], '/', fn() => 'Hello world'));
 
-        $expectedRoute = new Route('PUT', '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'editNewsItem');
+        $expectedRoute = new Route(['PUT'], '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'editNewsItem');
         $router->addRoute($expectedRoute);
 
         $routeFound = $router->findRoute($urlPath, $method);
         $this->assertSame($expectedRoute, $routeFound);
 
-        $router->addRoute(new Route('DELETE', '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'deleteNewsItem'));
-        $router->addRoute(new Route('GET', '/news/{id:[a-zA-Z-_0-9]{0,30}}/sources/{sourceId}', 'getNewsItemSource'));
-        $router->addRoute(new Route('GET', '/authors', 'authorsList'));
+        $router->addRoute(new Route(['DELETE'], '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'deleteNewsItem'));
+        $router->addRoute(new Route(['GET'], '/news/{id:[a-zA-Z-_0-9]{0,30}}/sources/{sourceId}', 'getNewsItemSource'));
+        $router->addRoute(new Route(['GET'], '/authors', 'authorsList'));
 
         $routeFound2 = $router->findRoute($urlPath, $method);
 

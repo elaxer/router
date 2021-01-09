@@ -38,12 +38,14 @@ class Router
     public function findRoute(string $urlPath, string $method): ?Route
     {
         foreach ($this->routes as $route) {
-            if ($route->getMethod() !== $method) {
+            if ($route->getMethods() !== null && !in_array($method, $route->getMethods())) {
                 continue;
             }
 
-            $parameters = PatternParser::getParameters($route->getPattern());
-            $regexp = PatternParser::makeRegexpFromPattern($route->getPattern(), $parameters);
+            $regexp = PatternParser::makeRegexpFromPattern(
+                $route->getPattern(),
+                PatternParser::getParameters($route->getPattern())
+            );
 
             if (preg_match($regexp, $urlPath)) {
                 return $route;
