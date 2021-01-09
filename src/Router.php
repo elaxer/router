@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Elaxer\Router;
 
-use Elaxer\Router\Parser\{InvalidCharacterException, PatternParser};
+use Elaxer\Router\Parser\{ForbiddenCharacterException, PatternParser};
 
 /**
- * Class Router
- *
  * @package Router
  */
 class Router
@@ -35,7 +33,7 @@ class Router
      * @param string $urlPath the path to which routes will be matched
      * @param string $method request method to which routes methods will be matched
      * @return Route|null returns route if found, returns null if route not found
-     * @throws InvalidCharacterException
+     * @throws ForbiddenCharacterException
      */
     public function findRoute(string $urlPath, string $method): ?Route
     {

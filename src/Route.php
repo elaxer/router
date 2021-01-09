@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Elaxer\Router;
 
 /**
- * Class Route
- *
  * Contains route information
  *
  * @package Router

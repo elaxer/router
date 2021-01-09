@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Elaxer\Router\Parser;
 
 /**
- * Class PatternParser
- *
  * Provides methods for working with patterns
  *
  * @package Router\Parser
@@ -28,12 +26,12 @@ class PatternParser
      *
      * @param string $pattern
      * @return array
-     * @throws InvalidCharacterException
+     * @throws ForbiddenCharacterException
      */
     public static function getParameters(string $pattern): array
     {
         if (mb_strpos($pattern, '~') !== false) {
-            throw new InvalidCharacterException('Invalid character "~" in parameter');
+            throw new ForbiddenCharacterException('Invalid character "~" in parameter');
         }
 
         $matches = [];

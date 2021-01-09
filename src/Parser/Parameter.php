@@ -16,30 +16,10 @@ class Parameter
     public const EMPTY_PARAMETER_REGEXP = '[^/]+';
 
     /**
-     * Parameter name
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * Parameter regexp. May be null value
-     *
-     * @var string|null
-     */
-    protected ?string $regexp;
-
-    /**
-     * Parameter constructor
-     *
      * @param string $name parameter name
-     * @param string|null $regexp parameter regexp
+     * @param string|null $regexp parameter regexp. May be null value
      */
-    public function __construct(string $name, ?string $regexp)
-    {
-        $this->name = $name;
-        $this->regexp = $regexp;
-    }
+    public function __construct(private string $name, private ?string $regexp) {}
 
     /**
      * Composes a named regular expression

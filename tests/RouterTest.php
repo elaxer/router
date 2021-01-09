@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\{Parser\InvalidCharacterException, Router, Route};
+use Elaxer\Router\{Parser\ForbiddenCharacterException, Router, Route};
 
 /**
  * Class RouterTest
@@ -23,7 +23,7 @@ class RouterTest extends TestCase
      * @param Route|null $expectedRoute
      * @param array $routes
      * @return void
-     * @throws InvalidCharacterException
+     * @throws ForbiddenCharacterException
      */
     public function testFindRoute(string $urlPath, string $method, ?Route $expectedRoute, array $routes): void
     {
@@ -85,7 +85,7 @@ class RouterTest extends TestCase
     /**
      * @covers Router::findRoute
      * @return void
-     * @throws InvalidCharacterException
+     * @throws ForbiddenCharacterException
      */
     public function testFindRouteTwice(): void
     {

@@ -15,6 +15,7 @@ use Elaxer\Router\Parser\Parameter;
 class ParameterTest extends TestCase
 {
     /**
+     * @covers Parameter::makeNamedRegexp
      * @dataProvider makeNamedRegexpProvider
      * @param string $name
      * @param string|null $regexp
@@ -23,8 +24,7 @@ class ParameterTest extends TestCase
      */
     public function testMakeNamedRegexp(string $name, ?string $regexp, string $expectedMadeRegexp): void
     {
-        $parameter = new Parameter($name, $regexp);
-        $this->assertEquals($expectedMadeRegexp, $parameter->makeNamedRegexp());
+        $this->assertEquals($expectedMadeRegexp, (new Parameter($name, $regexp))->makeNamedRegexp());
     }
 
     /**
@@ -40,6 +40,7 @@ class ParameterTest extends TestCase
     }
 
     /**
+     * @covers Parameter::makeRouteParameter
      * @dataProvider makeRouteParameterProvider
      * @param string $name
      * @param string|null $regexp
@@ -52,6 +53,9 @@ class ParameterTest extends TestCase
         $this->assertEquals($expectedParameter, $parameter->makeRouteParameter());
     }
 
+    /**
+     * @return array
+     */
     public function makeRouteParameterProvider(): array
     {
         return [
