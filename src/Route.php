@@ -14,37 +14,35 @@ namespace Elaxer\Router;
 class Route
 {
     /**
-     * Route method
-     *
-     * @var string
-     */
-    public string $method;
-
-    /**
-     * Route pattern. May contain regular expressions in braces ({})
-     *
-     * @var string
-     */
-    public string $pattern;
-
-    /**
-     * Route handler. May contain any type of value
-     *
-     * @var mixed
-     */
-    public $handler;
-
-    /**
      * Route constructor
      *
-     * @param string $method
-     * @param string $pattern
-     * @param mixed $handler
+     * @param string $method route method
+     * @param string $pattern route pattern. May contain regular expressions in braces ({})
+     * @param mixed $handler route handler. May contain any type of value
      */
-    public function __construct(string $method, string $pattern, $handler)
+    public function __construct(private string $method, private string $pattern, private mixed $handler) {}
+
+    /**
+     * @return string route method
+     */
+    public function getMethod(): string
     {
-        $this->method = $method;
-        $this->pattern = $pattern;
-        $this->handler = $handler;
+        return $this->method;
+    }
+
+    /**
+     * @return string route pattern
+     */
+    public function getPattern(): string
+    {
+        return $this->pattern;
+    }
+
+    /**
+     * @return mixed route handler
+     */
+    public function getHandler(): mixed
+    {
+        return $this->handler;
     }
 }

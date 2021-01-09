@@ -15,14 +15,17 @@ use Elaxer\Router\Route;
 class RouteTest extends TestCase
 {
     /**
+     * @covers Route::getMethod
+     * @covers Route::getPattern
+     * @covers Route::getHandler
      * @return void
      */
     public function testConstructor(): void
     {
         $route = new Route('GET', '/', 'HomeController@index');
 
-        $this->assertEquals('GET', $route->method);
-        $this->assertEquals('/', $route->pattern);
-        $this->assertEquals('HomeController@index', $route->handler);
+        $this->assertEquals('GET', $route->getMethod());
+        $this->assertEquals('/', $route->getPattern());
+        $this->assertEquals('HomeController@index', $route->getHandler());
     }
 }
