@@ -16,7 +16,9 @@ class Route
      * @param string $pattern route pattern. May contain regular expressions in braces "{}"
      * @param mixed $handler route handler. May contain any type of value
      */
-    public function __construct(private ?array $methods, private string $pattern, private mixed $handler) {}
+    public function __construct(private ?array $methods, private string $pattern, private mixed $handler)
+    {
+    }
 
     /**
      * @return array<string>|null route methods

@@ -25,7 +25,7 @@ class PatternParser
      * Returns an array of extracted parameters from a pattern
      *
      * @param string $pattern
-     * @return array
+     * @return array<Parameter>
      * @throws ForbiddenCharacterException
      */
     public static function getParameters(string $pattern): array
@@ -60,5 +60,24 @@ class PatternParser
             array_map(fn(Parameter $parameter) => $parameter->makeNamedRegexp(), $parameters),
             $pattern
         ) . '$~ui';
+    }
+
+    /**
+     * Returns parameters extracted from url path
+     *
+     * @param string $pattern route pattern
+     * @param string $urlPath url path for pattern matching
+     * @return array returns parameters extracted from url path
+     * @throws ForbiddenCharacterException
+     */
+    public static function extractParametersFromPath(string $pattern, string $urlPath): array
+    {
+        $parameters = self::getParameters($pattern);
+        $regexp = self::makeRegexpFromPattern($pattern, $parameters);
+
+        $matches = [];
+        preg_match($regexp, $urlPath, $matches);
+
+        return array_filter($matches, fn ($name) => !is_int($name), ARRAY_FILTER_USE_KEY);
     }
 }

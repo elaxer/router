@@ -99,8 +99,40 @@ class PatternParserTest extends TestCase
             [
                 '/posts/{id}/{page}',
                 [new Parameter('id', null), new Parameter('page', null)],
-                sprintf('~^/posts/(?<id>%s)/(?<page>%s)$~ui', Parameter::EMPTY_PARAMETER_REGEXP, Parameter::EMPTY_PARAMETER_REGEXP),
+                sprintf(
+                    '~^/posts/(?<id>%s)/(?<page>%s)$~ui',
+                    Parameter::EMPTY_PARAMETER_REGEXP,
+                    Parameter::EMPTY_PARAMETER_REGEXP
+                ),
             ],
+        ];
+    }
+
+    /**
+     * @covers PatternParser::getParametersValues
+     * @dataProvider extractParametersFromPathProvider
+     * @param string $urlPath
+     * @param string $pattern
+     * @param array $expectedParams
+     * @throws ForbiddenCharacterException
+     */
+    public function testExtractParametersFromPath(string $pattern, string $urlPath, array $expectedParams): void
+    {
+        $this->assertSame($expectedParams, PatternParser::extractParametersFromPath($pattern, $urlPath));
+    }
+
+    /**
+     * @return array
+     */
+    public function extractParametersFromPathProvider(): array
+    {
+        return [
+            ['/posts/{id:\d+}/page/{page:[0-9]+}', '/posts/34/page/2', ['id' => '34', 'page' => '2']],
+            ['{id:\d+}/{page:[0-9]+}/{any}', '34/42/weg312-13!34%#$2', [
+                'id' => '34',
+                'page' => '42',
+                'any' => 'weg312-13!34%#$2',
+            ]],
         ];
     }
 }

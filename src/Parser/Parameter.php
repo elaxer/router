@@ -19,7 +19,9 @@ class Parameter
      * @param string $name parameter name
      * @param string|null $regexp parameter regexp. May be null value
      */
-    public function __construct(private string $name, private ?string $regexp) {}
+    public function __construct(private string $name, private ?string $regexp)
+    {
+    }
 
     /**
      * Composes a named regular expression
