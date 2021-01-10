@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Elaxer\Router;
 
-use Elaxer\Router\Parser\{ForbiddenCharacterException, PatternParser};
+use Elaxer\Router\PatternParser\{ForbiddenCharacterException, PatternParser};
 
 /**
  * @package Router

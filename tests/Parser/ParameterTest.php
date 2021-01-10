@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests\Parser;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\Parser\Parameter;
+use Elaxer\Router\PatternParser\Parameter;
 
 /**
  * Class ParameterTest
  *
- * @package Router\Tests\Parser
+ * @package Router\Tests\PatternParser
  */
 class ParameterTest extends TestCase
 {

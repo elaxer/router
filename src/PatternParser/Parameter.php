@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Elaxer\Router\Parser;
+namespace Elaxer\Router\PatternParser;
 
 /**
  * Class Parameter
  *
  * An abstraction class over a parameter. Contains name and regexp and methods for working with them
  *
- * @package Router\Parser
+ * @package Router\PatternParser
  */
 class Parameter
 {

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests\Parser;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\Parser\{ForbiddenCharacterException, Parameter, PatternParser};
+use Elaxer\Router\PatternParser\{ForbiddenCharacterException, Parameter, PatternParser};
 
 /**
  * Class PatternParserTest
  *
- * @package Router\Tests\Parser
+ * @package Router\Tests\PatternParser
  */
 class PatternParserTest extends TestCase
 {

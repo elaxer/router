@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\{Parser\ForbiddenCharacterException, Router, Route};
+use Elaxer\Router\{PatternParser\ForbiddenCharacterException, Router, Route};
 
 /**
  * Class RouterTest

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Elaxer\Router\Parser;
+namespace Elaxer\Router\PatternParser;
 
 /**
  * Provides methods for working with patterns
  *
- * @package Router\Parser
+ * @package Router\PatternParser
  */
 class PatternParser
 {
@@ -56,8 +56,8 @@ class PatternParser
     public static function makeRegexpFromPattern(string $pattern, array $parameters): string
     {
         return '~^' . str_replace(
-            array_map(fn(Parameter $parameter) => $parameter->makeRouteParameter(), $parameters),
-            array_map(fn(Parameter $parameter) => $parameter->makeNamedRegexp(), $parameters),
+            array_map(fn(Parameter $parameter): string => $parameter->makeRouteParameter(), $parameters),
+            array_map(fn(Parameter $parameter): string => $parameter->makeNamedRegexp(), $parameters),
             $pattern
         ) . '$~ui';
     }
@@ -78,6 +78,6 @@ class PatternParser
         $matches = [];
         preg_match($regexp, $urlPath, $matches);
 
-        return array_filter($matches, fn ($name) => !is_int($name), ARRAY_FILTER_USE_KEY);
+        return array_filter($matches, fn (int|string $name): bool => !is_int($name), ARRAY_FILTER_USE_KEY);
     }
 }
