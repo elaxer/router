@@ -56,4 +56,25 @@ class Parameter
 
         return $parameter . '}';
     }
+
+    /**
+     * @return string returns parameter name
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string|null returns parameter regexp
+     */
+    public function getRegexp(): ?string
+    {
+        return $this->regexp;
+    }
+
+    public function __toString(): string
+    {
+        return $this->makeRouteParameter();
+    }
 }

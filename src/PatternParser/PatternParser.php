@@ -50,7 +50,7 @@ class PatternParser
      * Creates a regular expression through parameters
      *
      * @param string $pattern full regex
-     * @param array $parameters array of parameters
+     * @param array<Parameter> $parameters array of parameters
      * @return string
      */
     public static function makeRegexpFromPattern(string $pattern, array $parameters): string

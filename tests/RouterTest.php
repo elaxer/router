@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\{PatternParser\ForbiddenCharacterException, Router, Route};
+use Elaxer\Router\{PatternParser\ForbiddenCharacterException, RouteAddingException, Router, Route};
 
 /**
  * Class RouterTest
@@ -24,6 +24,7 @@ class RouterTest extends TestCase
      * @param array $routes
      * @return void
      * @throws ForbiddenCharacterException
+     * @throws RouteAddingException
      */
     public function testFindRoute(string $urlPath, string $method, ?Route $expectedRoute, array $routes): void
     {
@@ -99,6 +100,7 @@ class RouterTest extends TestCase
      * @covers Router::findRoute
      * @return void
      * @throws ForbiddenCharacterException
+     * @throws RouteAddingException
      */
     public function testFindRouteTwice(): void
     {
@@ -121,5 +123,64 @@ class RouterTest extends TestCase
         $routeFound2 = $router->findRoute($urlPath, $method);
 
         $this->assertSame($expectedRoute, $routeFound2);
+    }
+
+    /**
+     * @covers       Router::findRouteByName
+     * @dataProvider findRouteByNameProvider
+     * @param string $routerName
+     * @param array $routes
+     * @param Route|null $expectedRoute
+     * @throws RouteAddingException
+     */
+    public function testFindRouteByName(string $routerName, array $routes, ?Route $expectedRoute): void
+    {
+        $router = new Router();
+
+        foreach ($routes as $route) {
+            $router->addRoute($route);
+        }
+
+        $this->assertSame($expectedRoute, $router->findRouteByName($routerName));
+    }
+
+    public function findRouteByNameProvider(): iterable
+    {
+        $expectedRoute = new Route(null, '/', null, 'name3');
+        yield [
+            'name3',
+            [
+                new Route(null, '/', null, 'name1'),
+                new Route(null, '/', null, 'name2'),
+                $expectedRoute,
+                new Route(null, '/', null, 'name4'),
+            ],
+            $expectedRoute,
+        ];
+
+        yield [
+            'name5',
+            [
+                new Route(null, '/', null, 'name1'),
+                new Route(null, '/', null, 'name2'),
+                new Route(null, '/', null, 'name3'),
+                new Route(null, '/', null, 'name4'),
+            ],
+            null,
+        ];
+    }
+
+    /**
+     * @covers Router::addRoute
+     * @throws RouteAddingException
+     */
+    public function testAddRouteWithExistedName(): void
+    {
+        $this->expectException(RouteAddingException::class);
+        $this->expectExceptionMessage('A route named "routeName" is already set');
+        $router = new Router();
+
+        $router->addRoute(new Route(['GET'], '/', null, 'routeName'));
+        $router->addRoute(new Route(['POST', 'PUT'], '/posts/1', 'updatePost', 'routeName'));
     }
 }
