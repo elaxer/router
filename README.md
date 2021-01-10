@@ -45,3 +45,24 @@ if ($foundRoute !== null) {
     }
 }
 ```
+
+## Route naming
+You can name the route by specifying it as the fourth parameter of the constructor:
+```php
+$route = new Route(['GET'], '/users/{id}', 'getUserHandler', 'get-user');
+
+$router->addRoute($route);
+```
+
+You can find a route in the router by name
+```php
+$route = $router->findRouteByName('get-user');
+```
+
+## Url path compilation
+Using the Route::createPath method, passing parameters to it, you can create a path:
+```php
+$route = new Route(['GET'], '/users/{id}', 'getUserHandler');
+
+echo $route->createPath(['id' => 25]); // will output /users/25
+```

@@ -17,7 +17,9 @@ class Router
     private array $routes = [];
 
     /**
-     * @return array<Route> returns an array of all routes
+     * Returns an array of all routes
+     *
+     * @return array<Route> array of all routes
      */
     public function getRoutes(): array
     {
