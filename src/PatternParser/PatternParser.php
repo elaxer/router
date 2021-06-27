@@ -6,8 +6,6 @@ namespace Elaxer\Router\PatternParser;
 
 /**
  * Provides methods for working with patterns
- *
- * @package Router\PatternParser
  */
 class PatternParser implements PatternParserInterface
 {
@@ -48,8 +46,8 @@ class PatternParser implements PatternParserInterface
     public function makeRegexpFromPattern(string $pattern, array $parameters): string
     {
         return '~^' . str_replace(
-            array_map(fn(Parameter $parameter): string => $parameter->makeRouteParameter(), $parameters),
-            array_map(fn(Parameter $parameter): string => $parameter->makeNamedRegexp(), $parameters),
+            array_map(fn(ParameterInterface $parameter): string => $parameter->makeRouteParameter(), $parameters),
+            array_map(fn(ParameterInterface $parameter): string => $parameter->makeNamedRegexp(), $parameters),
             $pattern
         ) . '$~ui';
     }
@@ -59,12 +57,12 @@ class PatternParser implements PatternParserInterface
      */
     public function extractParametersFromPath(string $pattern, string $urlPath): array
     {
-        $parameters = self::getParameters($pattern);
-        $regexp = self::makeRegexpFromPattern($pattern, $parameters);
+        $parameters = $this->getParameters($pattern);
+        $regexp = $this->makeRegexpFromPattern($pattern, $parameters);
 
         $matches = [];
         preg_match($regexp, $urlPath, $matches);
 
-        return array_filter($matches, fn ($name): bool => !is_int($name), ARRAY_FILTER_USE_KEY);
+        return array_filter($matches, fn($name): bool => !is_int($name), ARRAY_FILTER_USE_KEY);
     }
 }

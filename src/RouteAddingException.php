@@ -8,8 +8,6 @@ use Exception;
 
 /**
  * Thrown away when a route with the same name already exists
- *
- * @package Elaxer\Router
  */
 class RouteAddingException extends Exception
 {

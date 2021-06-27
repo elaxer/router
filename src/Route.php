@@ -4,28 +4,53 @@ declare(strict_types=1);
 
 namespace Elaxer\Router;
 
-use Elaxer\Router\PatternParser\{ForbiddenCharacterException, PatternParser, Parameter};
+use Elaxer\Router\PatternParser\{ParameterInterface, PatternParserInterface};
 
 /**
  * Contains route information
- *
- * @package Router
  */
-class Route
+class Route implements RouteInterface
 {
+    /**
+     * @var array|null route method. Can be null if the route doesn't care which method
+     */
     private ?array $methods;
+
+    /**
+     * @var string route pattern. May contain regular expressions in braces "{}"
+     */
     private string $pattern;
+
+    /**
+     * @var mixed route handler. May contain any type of value
+     */
     private $handler;
+
+    /**
+     * @var string|null route name, identifier
+     */
     private ?string $name;
 
     /**
+     * @var PatternParserInterface
+     */
+    protected PatternParserInterface $patternParser;
+
+    /**
+     * @param PatternParserInterface $patternParser
      * @param array|null $methods route method. Can be null if the route doesn't care which method
      * @param string $pattern route pattern. May contain regular expressions in braces "{}"
      * @param mixed $handler route handler. May contain any type of value
      * @param string|null $name route name, identifier
      */
-    public function __construct(?array $methods, string $pattern, $handler, ?string $name = null)
-    {
+    public function __construct(
+        PatternParserInterface $patternParser,
+        ?array $methods,
+        string $pattern,
+        $handler,
+        ?string $name = null
+    ) {
+        $this->patternParser = $patternParser;
         $this->name = $name;
         $this->handler = $handler;
         $this->pattern = $pattern;
@@ -33,7 +58,7 @@ class Route
     }
 
     /**
-     * @return array<string>|null route methods
+     * {@inheritDoc}
      */
     public function getMethods(): ?array
     {
@@ -41,7 +66,7 @@ class Route
     }
 
     /**
-     * @return string route pattern
+     * {@inheritDoc}
      */
     public function getPattern(): string
     {
@@ -49,7 +74,7 @@ class Route
     }
 
     /**
-     * @return mixed route handler
+     * {@inheritDoc}
      */
     public function getHandler()
     {
@@ -57,7 +82,7 @@ class Route
     }
 
     /**
-     * @return string|null Route name
+     * {@inheritDoc}
      */
     public function getName(): ?string
     {
@@ -65,18 +90,13 @@ class Route
     }
 
     /**
-     * Creates a path by substituting parameters into the pattern
-     *
-     * @param array $parameters pattern parameters
-     * @return string created path
-     * @throws PathCreatingException
-     * @throws ForbiddenCharacterException
+     * {@inheritDoc}
      */
     public function createPath(array $parameters = []): string
     {
-        $patternParameters = PatternParser::getParameters($this->getPattern());
+        $patternParameters = $this->patternParser->getParameters($this->getPattern());
         $patternParametersKeys = array_map(
-            fn(Parameter $parameter): string => $parameter->getName(),
+            fn(ParameterInterface $parameter): string => $parameter->getName(),
             $patternParameters
         );
         if (
@@ -88,14 +108,14 @@ class Route
 
         $createdPath = $this->getPattern();
         foreach ($patternParameters as $patternParameter) {
-            $parameterValue = (string) $parameters[$patternParameter->getName()];
+            $parameterValue = (string)$parameters[$patternParameter->getName()];
             if (preg_match('~^' . $patternParameter->getRegexp() . '$~', $parameterValue) === 0) {
                 throw new PathCreatingException("Parameter \"{$patternParameter->getName()}\" with value "
                     . "\"{$parameterValue}\" does not match the regular expression from the pattern "
                     . "\"{$patternParameter->getRegexp()}\"");
             }
 
-            $createdPath = str_replace((string) $patternParameter, $parameterValue, $createdPath);
+            $createdPath = str_replace((string)$patternParameter, $parameterValue, $createdPath);
         }
 
         return $createdPath;

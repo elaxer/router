@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Elaxer\Router;
 
+/**
+ * Implementing a route store
+ */
 class RoutesCollection implements RoutesCollectionInterface
 {
     /**
-     * @var Route[]
+     * @var RouteInterface[]
      */
     protected array $routes = [];
 
     /**
      * {@inheritDoc}
      */
-    public function addRoute(Route $route): self
+    public function addRoute(RouteInterface $route): self
     {
         if ($route->getName() !== null) {
             foreach ($this->routes as $routerRoute) {

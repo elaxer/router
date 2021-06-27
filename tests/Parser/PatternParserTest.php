@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Elaxer\Router\Tests\Parser;
 
-use PHPUnit\Framework\TestCase;
 use Elaxer\Router\PatternParser\{ForbiddenCharacterException, Parameter, PatternParser};
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class PatternParserTest
- *
- * @package Router\Tests\PatternParser
+ * @see PatternParser
  */
 class PatternParserTest extends TestCase
 {
     /**
-     * @covers PatternParser::getParameters
+     * Tests extracting parameters from a route pattern
+     *
+     * @covers       PatternParser::getParameters
      * @dataProvider getParametersProvider
      * @param string $path
      * @param array $expectedParameters
@@ -57,6 +57,8 @@ class PatternParserTest extends TestCase
     }
 
     /**
+     * Tests parameter extraction with a regex with a forbidden character
+     *
      * @covers PatternParser::getParameters
      * @return void
      * @throws ForbiddenCharacterException
@@ -69,7 +71,9 @@ class PatternParserTest extends TestCase
     }
 
     /**
-     * @covers PatternParser::makeRegexpFromPattern
+     * Tests generating a complete regular expression based on a route pattern
+     *
+     * @covers       PatternParser::makeRegexpFromPattern
      * @dataProvider makeRegexpFromPatternProvider
      * @param string $pattern
      * @param array $parameters
@@ -88,12 +92,17 @@ class PatternParserTest extends TestCase
     {
         return [
             ['/posts/{id:\d+}', [new Parameter('id', '\d+')], '~^/posts/(?<id>\d+)$~ui'],
-            ['/posts/{id:\d+}/popular/{page:[0-9]+}', [
-                new Parameter('id', '\d+'),
-                new Parameter('page', '[0-9]+'),
-            ], '~^/posts/(?<id>\d+)/popular/(?<page>[0-9]+)$~ui'],
             [
-                '/books/{name}', [new Parameter('name', null)],
+                '/posts/{id:\d+}/popular/{page:[0-9]+}',
+                [
+                    new Parameter('id', '\d+'),
+                    new Parameter('page', '[0-9]+'),
+                ],
+                '~^/posts/(?<id>\d+)/popular/(?<page>[0-9]+)$~ui',
+            ],
+            [
+                '/books/{name}',
+                [new Parameter('name', null)],
                 '~^/books/(?<name>' . Parameter::EMPTY_PARAMETER_REGEXP . ')$~ui',
             ],
             [
@@ -109,7 +118,7 @@ class PatternParserTest extends TestCase
     }
 
     /**
-     * @covers PatternParser::getParametersValues
+     * @covers       PatternParser::getParametersValues
      * @dataProvider extractParametersFromPathProvider
      * @param string $urlPath
      * @param string $pattern
@@ -122,17 +131,23 @@ class PatternParserTest extends TestCase
     }
 
     /**
+     * Tests extracting parameter values from url path based on route pattern
+     *
      * @return array
      */
     public function extractParametersFromPathProvider(): array
     {
         return [
             ['/posts/{id:\d+}/page/{page:[0-9]+}', '/posts/34/page/2', ['id' => '34', 'page' => '2']],
-            ['{id:\d+}/{page:[0-9]+}/{any}', '34/42/weg312-13!34%#$2', [
-                'id' => '34',
-                'page' => '42',
-                'any' => 'weg312-13!34%#$2',
-            ]],
+            [
+                '{id:\d+}/{page:[0-9]+}/{any}',
+                '34/42/weg312-13!34%#$2',
+                [
+                    'id' => '34',
+                    'page' => '42',
+                    'any' => 'weg312-13!34%#$2',
+                ],
+            ],
         ];
     }
 }

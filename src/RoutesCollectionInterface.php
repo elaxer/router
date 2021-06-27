@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Elaxer\Router;
 
+/**
+ * Provides methods for storing routes
+ */
 interface RoutesCollectionInterface
 {
     /**
-     * @param Route $route
-     * @return RoutesCollectionInterface
-     * @throws RouteAddingException
+     * Adds a route to the collection
+     *
+     * @param RouteInterface $route added route
+     * @return self
+     * @throws RouteAddingException Thrown out if a route is added with a name that is already in the collection
      */
-    public function addRoute(Route $route): self;
+    public function addRoute(RouteInterface $route): self;
 
     /**
-     * @return Route[]
+     * Returns all routes added to the collection
+     *
+     * @return RouteInterface[]
      */
     public function getAllRoutes(): array;
 }

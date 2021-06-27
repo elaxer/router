@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace Elaxer\Router\PatternParser;
 
 /**
- * Class Parameter
- *
  * An abstraction class over a parameter. Contains name and regexp and methods for working with them
- *
- * @package Router\PatternParser
  */
-class Parameter
+class Parameter implements ParameterInterface
 {
+    /**
+     * The part of the regular expression that denotes an empty parameter of the pattern
+     */
     public const EMPTY_PARAMETER_REGEXP = '[^/]+';
+
+    /**
+     * @var string parameter name
+     */
     private string $name;
+
+    /**
+     * @var string|null parameter regexp. May be null value
+     */
     private ?string $regexp;
 
     /**
@@ -28,12 +35,7 @@ class Parameter
     }
 
     /**
-     * Composes a named regular expression
-     *
-     * If the regexp of the parameter ($this->regexp) is null,
-     * then the generated regular expression will be equal to the constant Parameter::EMPTY_PARAMETER_REGEXP
-     *
-     * @return string named regular expression
+     * {@inheritDoc}
      */
     public function makeNamedRegexp(): string
     {
@@ -45,10 +47,7 @@ class Parameter
     }
 
     /**
-     * Creates a string that matches the router pattern.
-     * If regexp is null then it will be omitted as a result
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function makeRouteParameter(): string
     {
@@ -62,7 +61,7 @@ class Parameter
     }
 
     /**
-     * @return string returns parameter name
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -70,7 +69,7 @@ class Parameter
     }
 
     /**
-     * @return string|null returns parameter regexp
+     * {@inheritDoc}
      */
     public function getRegexp(): ?string
     {
