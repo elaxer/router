@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Elaxer\Router\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\{PatternParser\ForbiddenCharacterException, RouteAddingException, Router, Route};
+use Elaxer\Router\{PatternParser\ForbiddenCharacterException, RouteAddingException, Router, Route, RoutesCollection};
 
 /**
  * Class RouterTest
@@ -28,13 +28,12 @@ class RouterTest extends TestCase
      */
     public function testFindRoute(string $urlPath, string $method, ?Route $expectedRoute, array $routes): void
     {
-        $router = new Router();
-
+        $collection = new RoutesCollection();
         foreach ($routes as $route) {
-            $router->addRoute($route);
+            $collection->addRoute($route);
         }
 
-        $routeFound = $router->findRoute($urlPath, $method);
+        $routeFound = (new Router($collection))->findRoute($urlPath, $method);
 
         $this->assertSame($expectedRoute, $routeFound);
     }
@@ -68,7 +67,12 @@ class RouterTest extends TestCase
         yield ['/users/1', 'GET', $expectedRoute, [$expectedRoute]];
 
         $expectedRoute = new Route(['GET'], '/posts/{id}', 'postHandler');
-        yield ['/posts/good-post31_', 'GET', $expectedRoute, [$expectedRoute, new Route(['GET'], '/posts', 'postsHandler')]];
+        yield [
+            '/posts/good-post31_',
+            'GET',
+            $expectedRoute,
+            [$expectedRoute, new Route(['GET'], '/posts', 'postsHandler')],
+        ];
 
         $expectedRoute = new Route(['DELETE'], '/posts/{id:\d+}', 'deletePost');
         yield ['/posts/51', 'DELETE', $expectedRoute, [
@@ -104,21 +108,24 @@ class RouterTest extends TestCase
      */
     public function testFindRouteTwice(): void
     {
-        $router = new Router();
+        $routesCollection = new RoutesCollection();
         $urlPath = '/news/breaking-news-22_02';
         $method = 'PUT';
 
-        $router->addRoute(new Route(['GET'], '/', fn() => 'Hello world'));
+        $routesCollection->addRoute(new Route(['GET'], '/', fn() => 'Hello world'));
 
         $expectedRoute = new Route(['PUT'], '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'editNewsItem');
-        $router->addRoute($expectedRoute);
+        $routesCollection->addRoute($expectedRoute);
+
+        $router = new Router($routesCollection);
 
         $routeFound = $router->findRoute($urlPath, $method);
         $this->assertSame($expectedRoute, $routeFound);
 
-        $router->addRoute(new Route(['DELETE'], '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'deleteNewsItem'));
-        $router->addRoute(new Route(['GET'], '/news/{id:[a-zA-Z-_0-9]{0,30}}/sources/{sourceId}', 'getNewsItemSource'));
-        $router->addRoute(new Route(['GET'], '/authors', 'authorsList'));
+        $routesCollection
+            ->addRoute(new Route(['DELETE'], '/news/{id:[a-zA-Z-_0-9]{0,30}}', 'deleteNewsItem'))
+            ->addRoute(new Route(['GET'], '/news/{id:[a-zA-Z-_0-9]{0,30}}/sources/{sourceId}', 'getNewsItemSource'))
+            ->addRoute(new Route(['GET'], '/authors', 'authorsList'));
 
         $routeFound2 = $router->findRoute($urlPath, $method);
 
@@ -135,13 +142,12 @@ class RouterTest extends TestCase
      */
     public function testFindRouteByName(string $routerName, array $routes, ?Route $expectedRoute): void
     {
-        $router = new Router();
-
+        $routesCollection = new RoutesCollection();
         foreach ($routes as $route) {
-            $router->addRoute($route);
+            $routesCollection->addRoute($route);
         }
 
-        $this->assertSame($expectedRoute, $router->findRouteByName($routerName));
+        $this->assertSame($expectedRoute, (new Router($routesCollection))->findRouteByName($routerName));
     }
 
     public function findRouteByNameProvider(): iterable
@@ -170,17 +176,5 @@ class RouterTest extends TestCase
         ];
     }
 
-    /**
-     * @covers Router::addRoute
-     * @throws RouteAddingException
-     */
-    public function testAddRouteWithExistedName(): void
-    {
-        $this->expectException(RouteAddingException::class);
-        $this->expectExceptionMessage('A route named "routeName" is already set');
-        $router = new Router();
 
-        $router->addRoute(new Route(['GET'], '/', null, 'routeName'));
-        $router->addRoute(new Route(['POST', 'PUT'], '/posts/1', 'updatePost', 'routeName'));
-    }
 }

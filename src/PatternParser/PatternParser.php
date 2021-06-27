@@ -78,6 +78,6 @@ class PatternParser
         $matches = [];
         preg_match($regexp, $urlPath, $matches);
 
-        return array_filter($matches, fn (int|string $name): bool => !is_int($name), ARRAY_FILTER_USE_KEY);
+        return array_filter($matches, fn ($name): bool => !is_int($name), ARRAY_FILTER_USE_KEY);
     }
 }

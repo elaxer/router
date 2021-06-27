@@ -14,13 +14,17 @@ namespace Elaxer\Router\PatternParser;
 class Parameter
 {
     public const EMPTY_PARAMETER_REGEXP = '[^/]+';
+    private string $name;
+    private ?string $regexp;
 
     /**
      * @param string $name parameter name
      * @param string|null $regexp parameter regexp. May be null value
      */
-    public function __construct(private string $name, private ?string $regexp)
+    public function __construct(string $name, ?string $regexp)
     {
+        $this->regexp = $regexp;
+        $this->name = $name;
     }
 
     /**

@@ -13,18 +13,23 @@ use Elaxer\Router\PatternParser\{ForbiddenCharacterException, PatternParser, Par
  */
 class Route
 {
+    private ?array $methods;
+    private string $pattern;
+    private $handler;
+    private ?string $name;
+
     /**
      * @param array|null $methods route method. Can be null if the route doesn't care which method
      * @param string $pattern route pattern. May contain regular expressions in braces "{}"
      * @param mixed $handler route handler. May contain any type of value
      * @param string|null $name route name, identifier
      */
-    public function __construct(
-        private ?array $methods,
-        private string $pattern,
-        private mixed $handler,
-        private ?string $name = null
-    ) {
+    public function __construct(?array $methods, string $pattern, $handler, ?string $name = null)
+    {
+        $this->name = $name;
+        $this->handler = $handler;
+        $this->pattern = $pattern;
+        $this->methods = $methods;
     }
 
     /**
@@ -46,7 +51,7 @@ class Route
     /**
      * @return mixed route handler
      */
-    public function getHandler(): mixed
+    public function getHandler()
     {
         return $this->handler;
     }
