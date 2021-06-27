@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Elaxer\Router\Tests\Parser;
 
-use PHPUnit\Framework\TestCase;
 use Elaxer\Router\PatternParser\Parameter;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class ParameterTest
- *
- * @package Router\Tests\PatternParser
+ * @see Parameter
  */
 class ParameterTest extends TestCase
 {
     /**
-     * @covers Parameter::makeNamedRegexp
+     * Tests the creation of a regex named
+     *
+     * @covers       Parameter::makeNamedRegexp
      * @dataProvider makeNamedRegexpProvider
      * @param string $name
      * @param string|null $regexp
@@ -40,7 +40,9 @@ class ParameterTest extends TestCase
     }
 
     /**
-     * @covers Parameter::makeRouteParameter
+     * Tests the creation of a route parameter
+     *
+     * @covers       Parameter::makeRouteParameter
      * @dataProvider makeRouteParameterProvider
      * @param string $name
      * @param string|null $regexp
@@ -49,8 +51,7 @@ class ParameterTest extends TestCase
      */
     public function testMakeRouteParameter(string $name, ?string $regexp, string $expectedParameter): void
     {
-        $parameter = new Parameter($name, $regexp);
-        $this->assertEquals($expectedParameter, $parameter->makeRouteParameter());
+        $this->assertEquals($expectedParameter, (new Parameter($name, $regexp))->makeRouteParameter());
     }
 
     /**

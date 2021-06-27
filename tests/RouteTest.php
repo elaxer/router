@@ -4,19 +4,37 @@ declare(strict_types=1);
 
 namespace Elaxer\Router\Tests;
 
-use Elaxer\Router\PathCreatingException;
-use Elaxer\Router\PatternParser\ForbiddenCharacterException;
+use Elaxer\Router\{PathCreatingException,
+    PatternParser\ForbiddenCharacterException,
+    PatternParser\PatternParser,
+    Route,
+    RoutesFactory,
+    RoutesFactoryInterface,};
 use PHPUnit\Framework\TestCase;
-use Elaxer\Router\Route;
 
 /**
- * Class RouteTest
- *
- * @package Router\Tests
+ * @see Route
  */
 class RouteTest extends TestCase
 {
     /**
+     * @var RoutesFactoryInterface routes factory
+     */
+    private RoutesFactoryInterface $routesFactory;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $this->routesFactory = new RoutesFactory(new PatternParser());
+    }
+
+    /**
+     * Tests the route constructor
+     *
      * @covers Route::getMethods
      * @covers Route::getPattern
      * @covers Route::getHandler
@@ -24,7 +42,7 @@ class RouteTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $route = new Route(['GET'], '/', 'HomeController@index');
+        $route = new Route(new PatternParser(), ['GET'], '/', 'HomeController@index');
 
         $this->assertEquals('/', $route->getPattern());
         $this->assertEquals('HomeController@index', $route->getHandler());
@@ -32,7 +50,9 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @covers Route::createPath
+     * Tests url path creation based on route template and parameter values
+     *
+     * @covers       Route::createPath
      * @dataProvider createPathProvider
      * @param string $expectedPath
      * @param Route $route
@@ -45,20 +65,25 @@ class RouteTest extends TestCase
         $this->assertSame($expectedPath, $route->createPath($parameters));
     }
 
+    /**
+     * @return array[]
+     */
     public function createPathProvider(): array
     {
         return [
-            ['/', new Route(null, '/', null), []],
-            ['/posts/527', new Route(null, '/posts/{id:\d+}', null), ['id' => 527]],
+            ['/', $this->routesFactory->createRoute(null, '/', null), []],
+            ['/posts/527', $this->routesFactory->createRoute(null, '/posts/{id:\d+}', null), ['id' => 527]],
             [
                 '/posts/527/comments/3',
-                new Route(null, '/posts/{id:\d+}/comments/{commentPage:\d+}', null),
+                $this->routesFactory->createRoute(null, '/posts/{id:\d+}/comments/{commentPage:\d+}', null),
                 ['commentPage' => 3, 'id' => '527'],
             ],
         ];
     }
 
     /**
+     * Tests the case where a path is created with a different number of parameters
+     *
      * @covers Route::createPath
      * @throws PathCreatingException
      * @throws ForbiddenCharacterException
@@ -68,10 +93,13 @@ class RouteTest extends TestCase
         $this->expectException(PathCreatingException::class);
         $this->expectExceptionMessage('The passed parameters don\'t match the parameters in the pattern');
 
-        (new Route(null, '/categories/{categoryId}/posts/{postId}', null))->createPath(['categoryId' => 1]);
+        ($this->routesFactory->createRoute(null, '/categories/{categoryId}/posts/{postId}', null))
+            ->createPath(['categoryId' => 1]);
     }
 
     /**
+     * Tests the case where a path is created with mismatched parameter names
+     *
      * @covers Route::createPath
      * @throws ForbiddenCharacterException
      * @throws PathCreatingException
@@ -81,11 +109,13 @@ class RouteTest extends TestCase
         $this->expectException(PathCreatingException::class);
         $this->expectExceptionMessage('The passed parameters don\'t match the parameters in the pattern');
 
-        (new Route(null, '/categories/{categoryId}/posts/{postId}', null))
+        ($this->routesFactory->createRoute(null, '/categories/{categoryId}/posts/{postId}', null))
             ->createPath(['categoryId' => 1, 'pstId' => 1]);
     }
 
     /**
+     * Tests the case where a path is generated with parameters with a mismatching regex value
+     *
      * @covers Route::createPath
      * @throws ForbiddenCharacterException
      * @throws PathCreatingException
@@ -97,6 +127,7 @@ class RouteTest extends TestCase
             'Parameter "categoryId" with value "health" does not match the regular expression from the pattern "\d+"'
         );
 
-        (new Route(null, '/categories/{categoryId:\d+}', null))->createPath(['categoryId' => 'health']);
+        ($this->routesFactory->createRoute(null, '/categories/{categoryId:\d+}', null))
+            ->createPath(['categoryId' => 'health']);
     }
 }

@@ -8,8 +8,6 @@ use Exception;
 
 /**
  * Thrown when an forbidden character is found in the pattern
- *
- * @package Router\PatternParser
  */
 class ForbiddenCharacterException extends Exception
 {

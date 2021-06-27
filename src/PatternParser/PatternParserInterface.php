@@ -13,8 +13,8 @@ interface PatternParserInterface
      * Returns an array of extracted parameters from a pattern
      *
      * @param string $pattern
-     * @return array<Parameter>
-     * @throws ForbiddenCharacterException
+     * @return ParameterInterface[]
+     * @throws ForbiddenCharacterException Thrown when an forbidden character is found in the pattern
      */
     public function getParameters(string $pattern): array;
 
@@ -22,7 +22,7 @@ interface PatternParserInterface
      * Creates a regular expression through parameters
      *
      * @param string $pattern full regex
-     * @param array<Parameter> $parameters array of parameters
+     * @param ParameterInterface[] $parameters array of parameters
      * @return string
      */
     public function makeRegexpFromPattern(string $pattern, array $parameters): string;
@@ -33,7 +33,7 @@ interface PatternParserInterface
      * @param string $pattern route pattern
      * @param string $urlPath url path for pattern matching
      * @return array returns parameters extracted from url path
-     * @throws ForbiddenCharacterException
+     * @throws ForbiddenCharacterException Thrown when an forbidden character is found in the pattern
      */
     public function extractParametersFromPath(string $pattern, string $urlPath): array;
 }
