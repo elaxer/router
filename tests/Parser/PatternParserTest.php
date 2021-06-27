@@ -24,7 +24,7 @@ class PatternParserTest extends TestCase
      */
     public function testGetParameters(string $path, array $expectedParameters): void
     {
-        $this->assertEquals($expectedParameters, PatternParser::getParameters($path));
+        $this->assertEquals($expectedParameters, (new PatternParser())->getParameters($path));
     }
 
     /**
@@ -65,7 +65,7 @@ class PatternParserTest extends TestCase
     {
         $this->expectException(ForbiddenCharacterException::class);
 
-        PatternParser::getParameters('/{test:\d+~}');
+        (new PatternParser())->getParameters('/{test:\d+~}');
     }
 
     /**
@@ -78,7 +78,7 @@ class PatternParserTest extends TestCase
      */
     public function testMakeRegexpFromPattern(string $pattern, array $parameters, string $expectedRegexp): void
     {
-        $this->assertEquals($expectedRegexp, PatternParser::makeRegexpFromPattern($pattern, $parameters));
+        $this->assertEquals($expectedRegexp, (new PatternParser())->makeRegexpFromPattern($pattern, $parameters));
     }
 
     /**
@@ -118,7 +118,7 @@ class PatternParserTest extends TestCase
      */
     public function testExtractParametersFromPath(string $pattern, string $urlPath, array $expectedParams): void
     {
-        $this->assertSame($expectedParams, PatternParser::extractParametersFromPath($pattern, $urlPath));
+        $this->assertSame($expectedParams, (new PatternParser())->extractParametersFromPath($pattern, $urlPath));
     }
 
     /**

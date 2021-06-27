@@ -9,7 +9,7 @@ namespace Elaxer\Router\PatternParser;
  *
  * @package Router\PatternParser
  */
-class PatternParser
+class PatternParser implements PatternParserInterface
 {
     /**
      * Regular expression for parsing parameters from a pattern
@@ -22,13 +22,9 @@ class PatternParser
     \s*\}';
 
     /**
-     * Returns an array of extracted parameters from a pattern
-     *
-     * @param string $pattern
-     * @return array<Parameter>
-     * @throws ForbiddenCharacterException
+     * {@inheritDoc}
      */
-    public static function getParameters(string $pattern): array
+    public function getParameters(string $pattern): array
     {
         if (mb_strpos($pattern, '~') !== false) {
             throw new ForbiddenCharacterException('Invalid character "~" in parameter');
@@ -47,13 +43,9 @@ class PatternParser
     }
 
     /**
-     * Creates a regular expression through parameters
-     *
-     * @param string $pattern full regex
-     * @param array<Parameter> $parameters array of parameters
-     * @return string
+     * {@inheritDoc}
      */
-    public static function makeRegexpFromPattern(string $pattern, array $parameters): string
+    public function makeRegexpFromPattern(string $pattern, array $parameters): string
     {
         return '~^' . str_replace(
             array_map(fn(Parameter $parameter): string => $parameter->makeRouteParameter(), $parameters),
@@ -63,14 +55,9 @@ class PatternParser
     }
 
     /**
-     * Returns parameters extracted from url path
-     *
-     * @param string $pattern route pattern
-     * @param string $urlPath url path for pattern matching
-     * @return array returns parameters extracted from url path
-     * @throws ForbiddenCharacterException
+     * {@inheritDoc}
      */
-    public static function extractParametersFromPath(string $pattern, string $urlPath): array
+    public function extractParametersFromPath(string $pattern, string $urlPath): array
     {
         $parameters = self::getParameters($pattern);
         $regexp = self::makeRegexpFromPattern($pattern, $parameters);
